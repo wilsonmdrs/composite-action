@@ -51,3 +51,4 @@ runs:
 
     - name: Build Application
       run: ${{ inputs.PACKAGE_MANAGER }} run build
+      shell: bash

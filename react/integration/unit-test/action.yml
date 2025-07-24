@@ -1,0 +1,43 @@
+name: Jest Unit Tests - React
+description: Runs Jest unit tests in a React project
+
+inputs:
+  NODE_VERSION:
+    description: Node version to use
+    required: true
+    default: 20.x
+
+  PACKAGE_MANAGER:
+    description: Package manager to use (yarn, npm, pnpm)
+    required: true
+    default: yarn
+
+  TEST_SCRIPT:
+    description: Name of the test script in package.json
+    required: false
+    default: test
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Enable Corepack
+      if: ${{ inputs.PACKAGE_MANAGER == 'yarn' || inputs.PACKAGE_MANAGER == 'pnpm' }}
+      run: corepack enable
+      shell: bash
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.NODE_VERSION }}
+        cache: ${{ inputs.PACKAGE_MANAGER }}
+
+    - name: Install Dependencies
+      run: ${{ inputs.PACKAGE_MANAGER }} install
+      shell: bash
+
+    - name: Run Jest Tests
+      run: ${{ inputs.PACKAGE_MANAGER }} run ${{ inputs.TEST_SCRIPT }}
+      shell: bash

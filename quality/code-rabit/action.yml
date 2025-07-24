@@ -1,0 +1,32 @@
+name: CodeRabbit PR Review
+description: Triggers a CodeRabbit AI-powered PR review
+
+inputs:
+  GITHUB_TOKEN:
+    description: GitHub token for PR access
+    required: true
+
+  CODE_RABBIT_TOKEN:
+    description: CodeRabbit token for authentication
+    required: true
+
+  REVIEWERS:
+    description: List of reviewers to mention
+    required: false
+    default: "@wilsonmdrs"
+
+  CUSTOM_PROMPT:
+    description: Custom instruction for the AI reviewer
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run CodeRabbit Review
+      uses: coderabbitai/coderabbit@v3
+      with:
+        github-token: ${{ inputs.GITHUB_TOKEN }}
+        coderabbit-token: ${{ inputs.CODE_RABBIT_TOKEN }}
+        reviewers: ${{ inputs.REVIEWERS }}
+        custom-prompt: ${{ inputs.CUSTOM_PROMPT }}

@@ -1,0 +1,29 @@
+name: Maestro E2E Tests
+description: Runs mobile E2E tests using Maestro
+
+inputs:
+  MAESTRO_VERSION:
+    description: Version of Maestro to install
+    required: false
+    default: "latest"
+
+  FLOW_PATH:
+    description: Path to the Maestro flows
+    required: false
+    default: maestro/
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Maestro CLI
+      run: |
+        curl -Ls "https://get.maestro.mobile.dev" | bash
+        echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+      shell: bash
+
+    - name: Run Maestro Tests
+      run: maestro test ${{ inputs.FLOW_PATH }}
+      shell: bash

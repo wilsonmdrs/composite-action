@@ -1,0 +1,52 @@
+name: Static Code Validation - React
+description: Runs ESLint, Prettier, and optionally TypeScript checks for React projects
+
+inputs:
+  NODE_VERSION:
+    description: Node version to use
+    required: true
+    default: 20.x
+
+  PACKAGE_MANAGER:
+    description: Package manager to use (yarn, npm, pnpm)
+    required: true
+    default: yarn
+
+  RUN_TYPECHECK:
+    description: Whether to run TypeScript type checking
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Enable Corepack
+      if: ${{ inputs.PACKAGE_MANAGER == 'yarn' || inputs.PACKAGE_MANAGER == 'pnpm' }}
+      run: corepack enable
+      shell: bash
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.NODE_VERSION }}
+        cache: ${{ inputs.PACKAGE_MANAGER }}
+
+    - name: Install Dependencies
+      run: ${{ inputs.PACKAGE_MANAGER }} install
+      shell: bash
+
+    - name: Run ESLint
+      run: ${{ inputs.PACKAGE_MANAGER }} run lint
+      shell: bash
+
+    - name: Run Prettier
+      run: ${{ inputs.PACKAGE_MANAGER }} run prettier
+      shell: bash
+
+    - name: Run Type Check
+      if: ${{ inputs.RUN_TYPECHECK == 'true' }}
+      run: ${{ inputs.PACKAGE_MANAGER }} run typecheck
+      shell: bash
